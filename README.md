@@ -28,6 +28,26 @@ import * as process from "process";
 window["process"] = process;
 ```
 
+This file must be added to both angular.json and tsconfig.app.json files:
+
+angular.json:
+
+```json
+            "polyfills": [
+              "zone.js",
+              "src/polyfills.ts"
+            ],
+```
+
+typescript.app.json:
+
+```json
+  "files": [
+    "src/polyfills.ts",
+    "src/main.ts"
+  ],
+```
+
 This will add global, Buffer and process to the "global" scope, needed for backwards compatibility with some libraries that are primarily built for Node.js and not updated with ESM support.
 
 As of current date, the library has a TypeScript definition error so you must turn on ignore validation for imported dependencies, add this to tsconfig.json compilerOptions section:
@@ -65,8 +85,6 @@ export class AppComponent {
 ```
 
 First time you run, the browser will auto-generate a private key and DID. Next reload, it will load it from storage in the browser, this might take a few seconds while some data is decrypted.
-
-
 
 # Angular
 
