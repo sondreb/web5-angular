@@ -1,4 +1,74 @@
-# App
+# Angular Web5 Example
+
+## Steps to add web5 to the project
+
+```sh
+npm install crypto-browserify stream-browserify process
+```
+
+```sh
+npm install @web5/api
+```
+
+Edit tsconfig.json compilerOptions section:
+
+```json
+    "paths": {
+      "crypto": ["node_modules/crypto-browserify"],
+      "stream": ["node_modules/stream-browserify"]
+    }
+```
+
+Add polyfill.ts, as Angular no longer adds a polyfill by default, add the `polyfills.ts` to your src folder with this content.
+
+```ts
+(window as any).global = window;
+global.Buffer = global.Buffer || require("buffer").Buffer;
+import * as process from "process";
+window["process"] = process;
+```
+
+This will add global, Buffer and process to the "global" scope, needed for backwards compatibility with some libraries that are primarily built for Node.js and not updated with ESM support.
+
+As of current date, the library has a TypeScript definition error so you must turn on ignore validation for imported dependencies, add this to tsconfig.json compilerOptions section:
+
+```
+"skipLibCheck": true,
+```
+
+Next you might get an types error, so perform this operation:
+
+```sh
+npm i --save-dev @types/readable-stream
+```
+
+Edit the app.component.ts with a basic example to verify successful usage of the library:
+
+```ts
+import { Component } from "@angular/core";
+import { Web5 } from "@web5/api";
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.scss"],
+})
+export class AppComponent {
+  title = "app";
+
+  async ngOnInit() {
+    const { web5, did: myDid } = await Web5.connect();
+    console.log(myDid);
+    console.log(web5);
+  }
+}
+```
+
+First time you run, the browser will auto-generate a private key and DID. Next reload, it will load it from storage in the browser, this might take a few seconds while some data is decrypted.
+
+
+
+# Angular
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.3.
 
