@@ -8,3 +8,6 @@ Angular project that works with web5.js
 npm install crypto-browserify stream-browserify process
 ```
 
+```
+npm install @web5/api
+```
