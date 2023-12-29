@@ -3,63 +3,44 @@
 ## Steps to add web5 to the project
 
 ```sh
-npm install crypto-browserify stream-browserify process
+npm install @web5/api crypto-browserify stream-browserify
 ```
 
 ```sh
-npm install @web5/api
+npm i -D @angular-builders/custom-webpack
 ```
 
-Edit tsconfig.json compilerOptions section:
+Previous examples used different methods, this has been updated to only rely on custom webpack configurationa for everything.
 
-```json
-    "paths": {
-      "crypto": ["node_modules/crypto-browserify"],
-      "stream": ["node_modules/stream-browserify"]
-    }
-```
+#1: Modify your builders in angular.json, to any of these: `@angular-builders/custom-webpack:[browser|server|karma|dev-server|extract-i18n]`
 
-Add polyfill.ts, as Angular no longer adds a polyfill by default, add the `polyfills.ts` to your src folder with this content.
+#2: Change the `"browser": "src/main.ts",` to `"main": "src/main.ts",` in angular.json
 
-```ts
-(window as any).global = window;
-global.Buffer = global.Buffer || require("buffer").Buffer;
-import * as process from "process";
-window["process"] = process;
-```
+#3: Create the `webpack.config.js` file with this content:
 
-This file must be added to both angular.json and tsconfig.app.json files:
+```js
+const webpack = require('webpack');
 
-angular.json:
-
-```json
-            "polyfills": [
-              "zone.js",
-              "src/polyfills.ts"
-            ],
-```
-
-typescript.app.json:
-
-```json
-  "files": [
-    "src/polyfills.ts",
-    "src/main.ts"
-  ],
-```
-
-This will add global, Buffer and process to the "global" scope, needed for backwards compatibility with some libraries that are primarily built for Node.js and not updated with ESM support.
-
-As of current date, the library has a TypeScript definition error so you must turn on ignore validation for imported dependencies, add this to tsconfig.json compilerOptions section:
-
-```
-"skipLibCheck": true,
-```
-
-Next you might get an types error, so perform this operation:
-
-```sh
-npm i --save-dev @types/readable-stream
+module.exports = {
+    resolve: {
+        fallback: {
+            "crypto": require.resolve("crypto-browserify"),
+            "stream": require.resolve("stream-browserify"),
+        },
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            process: 'process/browser',
+        }),
+        new webpack.NormalModuleReplacementPlugin(
+            /node:crypto/,
+            require.resolve('crypto-browserify')
+        ),
+        new webpack.DefinePlugin({
+            global: 'globalThis',
+        }),
+    ],
+};
 ```
 
 Edit the app.component.ts with a basic example to verify successful usage of the library:
