@@ -14,6 +14,16 @@ Previous examples used different methods, this has been updated to only rely on 
 
 #1: Modify your builders in angular.json, to any of these: `@angular-builders/custom-webpack:[browser|server|karma|dev-server|extract-i18n]`
 
+Also add the path to webpack config:
+
+```json
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./webpack.config.js"
+            },
+```
+
 #2: Change the `"browser": "src/main.ts",` to `"main": "src/main.ts",` in angular.json
 
 #3: Create the `webpack.config.js` file with this content:
