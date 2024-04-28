@@ -1,5 +1,47 @@
 # Angular Web5 Example
 
+## Angular 17 and web5-js 1.0
+
+Here is an updated and simplified way to get web5-js library work with Angular 17.
+
+```sh
+npm install @web5/api process
+```
+
+Modify your `package.json` with `type: module` ensuring your project uses ESM.
+
+Add a polyfill.ts into your src folder, include that file in the `tsconfig.app.json` file:
+
+```json
+  "files": [
+    "src/polyfills.ts",
+    "src/main.ts"
+  ],
+```
+
+And included it in the `angular.json` file:
+
+```json
+          "polyfills": "src/polyfills.ts",
+```
+
+Content of the polyfill:
+
+```
+import * as process from 'process';
+
+(window as any).process = process;
+```
+
+That should be enough to at least have the basic sample work:
+
+```ts
+import { Web5 } from '@web5/api';
+const { web5, did: aliceDid } = await Web5.connect();
+console.log(web5);
+console.log(aliceDid);
+```
+
 ## Steps to add web5 to the project
 
 ```sh
